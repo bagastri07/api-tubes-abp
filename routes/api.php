@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CashierController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::get('/cashiers', [CashierController::class, 'index']);
+// Auth Routes
+Route::post('/login', [AuthController::class, 'login']);
+
+// Cashier Routes
+Route::get('/cashiers', [CashierController::class, 'index'])->middleware('auth:sanctum');
 Route::post('/cashiers', [CashierController::class, 'store']);
-Route::put('/cashiers/{id}', [CashierController::class, 'update']);
+Route::put('/cashiers/{id}', [CashierController::class, 'update'])->middleware('auth:sanctum');
+Route::get('/cashiers/{id}', [CashierController::class, 'show'])->middleware('auth:sanctum');

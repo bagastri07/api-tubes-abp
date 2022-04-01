@@ -56,9 +56,13 @@ class CashierController extends Controller
 
         try {
             $cashier = Cashier::create($request->all());
+
+            $token = $cashier->createToken($request->input('email'))->plainTextToken;
+
             $response = [
                 'message' => 'Created',
-                'data' => $cashier
+                'data' => $cashier,
+                'access_token' => $token
             ];
             return response()->json($response, Response::HTTP_CREATED);
         } catch (QueryException $e) {
@@ -76,7 +80,11 @@ class CashierController extends Controller
      */
     public function show($id)
     {
-        //
+        $cashier = Cashier::findOrFail($id);
+        $response = [
+            'data'=> $cashier
+        ];
+        return response()->json($response, Response::HTTP_OK);
     }
 
     /**
@@ -105,7 +113,7 @@ class CashierController extends Controller
             abort(404, 'cashier not found');
         }
 
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->except('email'), [
             'name' => 'required',
             'password' => 'required',
             'birthday' => 'required',
