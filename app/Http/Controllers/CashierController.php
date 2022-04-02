@@ -17,11 +17,12 @@ class CashierController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $owner = $request->user();
         $cashier = Cashier::all();
         $response = [
-            'data' => $cashier
+            'data' => $cashier->where('owner_id', $owner['id'])
         ];
 
         return response()->json($response, Response::HTTP_OK);
@@ -54,15 +55,15 @@ class CashierController extends Controller
             'password' => $hashedPassword
         ]);
 
+        $owner = $request->user();
+        $request->request->add(['owner_id' => $owner['id']]);
+
         try {
             $cashier = Cashier::create($request->all());
-
-            $token = $cashier->createToken($request->input('email'))->plainTextToken;
 
             $response = [
                 'message' => 'Created',
                 'data' => $cashier,
-                'access_token' => $token
             ];
             return response()->json($response, Response::HTTP_CREATED);
         } catch (QueryException $e) {
@@ -78,9 +79,26 @@ class CashierController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id, Request $request)
     {
         $cashier = Cashier::findOrFail($id);
+
+        $owner = $request->user();
+        if ($cashier['owner_id'] != $owner['id']) {
+            return abort(Response::HTTP_FORBIDDEN, 'this cashier not belongs to you');
+        }
+
+        $response = [
+            'data'=> $cashier
+        ];
+        return response()->json($response, Response::HTTP_OK);
+    }
+
+    public function showCurrent(Request $request)
+    {
+        $user = $request->user();
+        $cashier = Cashier::findOrFail($user['id']);
+
         $response = [
             'data'=> $cashier
         ];
@@ -110,7 +128,12 @@ class CashierController extends Controller
         $cashier = Cashier::find($id);
 
         if (!$cashier) {
-            abort(404, 'cashier not found');
+            return abort(Response::HTTP_NOT_FOUND, 'cashier not found');
+        }
+
+        $owner = $request->user();
+        if ($cashier['owner_id'] != $owner['id']) {
+            return abort(Response::HTTP_FORBIDDEN, 'this cashier not belongs to you');
         }
 
         $validator = Validator::make($request->except('email'), [
@@ -150,8 +173,29 @@ class CashierController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
-        //
+        $cashier = Cashier::find($id);
+
+        if (!$cashier) {
+            abort(404, 'cashier not found');
+        }
+
+        $owner = $request->user();
+        if ($cashier['owner_id'] != $owner['id']) {
+            return abort(Response::HTTP_FORBIDDEN, 'this cashier not belongs to you');
+        }
+
+        try {
+            $cashier->delete();
+            $response = [
+                'message' => 'deleted',
+            ];
+            return response()->json($response, Response::HTTP_OK);
+        } catch (QueryException $e) {
+            return response()->json([
+                'message' => "Failed" . $e->errorInfo
+            ]);
+        }
     }
 }
