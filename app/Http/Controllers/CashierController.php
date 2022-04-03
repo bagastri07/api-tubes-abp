@@ -100,7 +100,7 @@ class CashierController extends Controller
         $cashier = Cashier::findOrFail($user['id']);
 
         $response = [
-            'data'=> $cashier
+            'data'=> $cashier,
         ];
         return response()->json($response, Response::HTTP_OK);
     }

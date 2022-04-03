@@ -28,7 +28,7 @@ Route::post('/auth/login-owner', [AuthController::class, 'loginOwner']);
 
 // Owner ROutes
 Route::post('/owners', [OwnerController::class, 'store']);
-Route::get('/owners/{id}', [OwnerController::class, 'show'])->middleware(['auth:sanctum', 'ability:owner']);
+Route::get('/owners', [OwnerController::class, 'show'])->middleware(['auth:sanctum', 'ability:owner']);
 
 // Cashier Routes
 Route::get('/cashiers/current', [CashierController::class, 'showCurrent'])->middleware(['auth:sanctum', 'ability:cashier']);

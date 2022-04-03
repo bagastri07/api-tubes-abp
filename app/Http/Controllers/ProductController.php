@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Owner;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class OwnerController extends Controller
+class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,12 +15,7 @@ class OwnerController extends Controller
      */
     public function index()
     {
-        $owner = Owner::all();
-        $response = [
-            'data' => $owner
-        ];
-
-        return response()->json($response, Response::HTTP_OK);
+        //
     }
 
     /**
@@ -33,7 +25,7 @@ class OwnerController extends Controller
      */
     public function create()
     {
-        
+        //
     }
 
     /**
@@ -46,34 +38,20 @@ class OwnerController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'email' => 'required|email|unique:owners',
-            'password' => 'required',
-            'birthday' => 'required',
-            'phone_number' => 'required'
+            'price' => 'required|email|unique:cashiers',
+            'type' => 'required|in:tiket,produk',
         ]);
+
+        $product = $request->all();
+
+        $product['image_url'] = 'localhost:';
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 
             Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $hashedPassword = Hash::make($request->input('password'));
-        $request->merge([
-            'password' => $hashedPassword
-        ]);
 
-        try {
-            $owner = Owner::create($request->all());
-            $response = [
-                'message' => 'Created',
-                'data' => $owner,
-            ];
-            return response()->json($response, Response::HTTP_CREATED);
-        } catch (QueryException $e) {
-            return response()->json([
-                'message' => "Failed" . $e->errorInfo
-            ]);
-        }
     }
 
     /**
@@ -82,15 +60,9 @@ class OwnerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request)
+    public function show($id)
     {
-        $user = $request->user();
-        $owner = Owner::findOrFail($user['id']);
-
-        $response = [
-            'data'=> $owner
-        ];
-        return response()->json($response, Response::HTTP_OK);
+        //
     }
 
     /**
