@@ -17,8 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->double('price');
-            $table->enum('type', ['tiket', 'produk']);
-            $table->string('image_url');
+            $table->enum('type', ['ticket', 'product']);
+            $table->string('image_url')->default('img/no-image-available.png');
             $table->foreignId('owner_id');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();

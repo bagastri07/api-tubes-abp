@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductController extends Controller
 {
@@ -13,9 +17,22 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $owner = $request->user();
+
+        $products = QueryBuilder::for(Product::class)
+            ->allowedFilters('type')
+            ->defaultSort('name', '-created_at')
+            ->allowedSorts('name', 'created_at')
+            ->where('owner_id', $owner['id'])
+            ->get();
+
+        $response = [
+            'data' => $products
+        ];
+
+        return response()->json($response, Response::HTTP_OK);
     }
 
     /**
@@ -38,17 +55,30 @@ class ProductController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'price' => 'required|email|unique:cashiers',
-            'type' => 'required|in:tiket,produk',
+            'price' => 'required|numeric',
+            'type' => 'required|in:ticket,product',
         ]);
 
-        $product = $request->all();
-
-        $product['image_url'] = 'localhost:';
 
         if ($validator->fails()) {
             return response()->json($validator->errors(), 
             Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $owner = $request->user();
+        $producData = $request->all();
+        $producData['owner_id'] = $owner['id'];
+        try {
+            $product = Product::create($producData);
+            $response = [
+                'message' => 'Created',
+                'data' => $product,
+            ];
+            return response()->json($response, Response::HTTP_CREATED);
+        } catch (QueryException $e) {
+            return response()->json([
+                'message' => $e->errorInfo
+            ]);
         }
 
 
@@ -60,9 +90,23 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request ,$id)
     {
-        //
+        $owner = $request->user();
+        $products = DB::table('products')
+            ->where('owner_id', $owner['id'])
+            ->where('id', $id)
+            ->first();
+
+        if ($products == null) {
+            return response()->json(['message' => 'product not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $response = [
+            'data' => $products
+        ];
+
+        return response()->json($response, Response::HTTP_OK);
     }
 
     /**
@@ -73,7 +117,7 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        //
+        
     }
 
     /**
@@ -85,7 +129,41 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $owner = $request->user();
+
+        $product = DB::table('products')
+            ->where('id', $id)
+            ->where('owner_id', $owner['id']);
+
+        if ($product == null) {
+            return response()->json(['message' => 'product not found'], Response::HTTP_NOT_FOUND);
+        }
+        
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'price' => 'required|numeric',
+            'type' => 'required|in:ticket,product',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 
+            Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        try {
+            $product->update($request->all());
+            $response = [
+                'message' => 'updated'
+            ];
+            return response()->json($response, Response::HTTP_OK);
+
+        } catch(QueryException $e) {
+            return response()->json([
+                'message' => $e->errorInfo
+            ]);
+        }
+
+        
     }
 
     /**
@@ -94,8 +172,34 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
-        //
+        $owner = $request->user();
+        $product = DB::table('products')
+            ->where('id', $id)
+            ->where('owner_id', $owner['id'])
+            ->first();
+
+        if ($product == null) {
+            return response()->json(['message' => 'product not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        try {
+            DB::table('products')
+                ->where('id', $id)
+                ->where('owner_id', $owner['id'])
+                ->delete();
+            $response = [
+                'message' => 'deleted',
+                'data' => $product
+            ];
+    
+            return response()->json($response, Response::HTTP_OK);
+
+        } catch (QueryException $e) {
+            return response()->json([
+                'message' => $e->errorInfo
+            ]);
+        }
     }
 }

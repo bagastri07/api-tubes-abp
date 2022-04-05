@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CashierController;
 use App\Http\Controllers\OwnerController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -40,3 +41,10 @@ Route::put('/cashiers/{id}', [CashierController::class, 'update'])->middleware([
 Route::get('/cashiers/{id}', [CashierController::class, 'show'])->middleware(['auth:sanctum', 'ability:owner']);
 Route::delete('/cashiers/{id}', [CashierController::class, 'destroy'])->middleware(['auth:sanctum', 'ability:owner']);
 Route::patch('/cashiers/{id}/change-password', [CashierController::class, 'updatePassword'])->middleware(['auth:sanctum', 'ability:owner']);
+
+// Product Routes
+Route::post('/products', [ProductController::class, 'store'])->middleware(['auth:sanctum', 'ability:owner']);
+Route::get('/products', [ProductController::class, 'index'])->middleware(['auth:sanctum', 'ability:owner']);
+Route::get('/products/{id}', [ProductController::class, 'show'])->middleware(['auth:sanctum', 'ability:owner']);
+Route::put('/products/{id}', [ProductController::class, 'update'])->middleware(['auth:sanctum', 'ability:owner']);
+Route::delete('/products/{id}', [ProductController::class, 'destroy'])->middleware(['auth:sanctum', 'ability:owner']);
