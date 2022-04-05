@@ -138,7 +138,6 @@ class CashierController extends Controller
 
         $validator = Validator::make($request->except('email'), [
             'name' => 'required',
-            'password' => 'required',
             'birthday' => 'required',
             'phone_number' => 'required'
         ]);
@@ -148,16 +147,56 @@ class CashierController extends Controller
             Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $hashedPassword = Hash::make($request->input('password'));
-        $request->merge([
-            'password' => $hashedPassword
-        ]);
-
         try {
             $cashier->update($request->except('email'));
             $response = [
                 'message' => 'Updated',
                 'data' => $cashier
+            ];
+            return response()->json($response, Response::HTTP_OK);
+        } catch (QueryException $e) {
+            return response()->json([
+                'message' => "Failed" . $e->errorInfo
+            ]);
+        }
+    }
+
+    public function updatePassword(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'old_password' => 'required',
+            'new_password' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 
+            Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $cashier = Cashier::find($id);
+
+        $owner = $request->user();
+        if ($cashier['owner_id'] != $owner['id']) {
+            return response()->json([
+                'message' => 'this cashier not belong to this owner'
+            ], Response::HTTP_FORBIDDEN);
+        }
+
+        if (!Hash::check($request->input('old_password'), $cashier['password'])) {
+            return response()->json([
+                'message' => 'wrong password'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $hashedPassword = Hash::make($request->input('new_password'));
+
+        try {
+            $cashier->password = $hashedPassword;
+
+             $cashier->save();
+
+             $response = [
+                'message' => 'Password Updated'
             ];
             return response()->json($response, Response::HTTP_OK);
         } catch (QueryException $e) {

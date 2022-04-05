@@ -29,6 +29,8 @@ Route::post('/auth/login-owner', [AuthController::class, 'loginOwner']);
 // Owner ROutes
 Route::post('/owners', [OwnerController::class, 'store']);
 Route::get('/owners', [OwnerController::class, 'show'])->middleware(['auth:sanctum', 'ability:owner']);
+Route::put('/owners', [OwnerController::class, 'update'])->middleware(['auth:sanctum', 'ability:owner']);
+Route::patch('/owners/change-password', [OwnerController::class, 'updatePassword'])->middleware(['auth:sanctum', 'ability:owner']);
 
 // Cashier Routes
 Route::get('/cashiers/current', [CashierController::class, 'showCurrent'])->middleware(['auth:sanctum', 'ability:cashier']);
@@ -37,3 +39,4 @@ Route::post('/cashiers', [CashierController::class, 'store'])->middleware(['auth
 Route::put('/cashiers/{id}', [CashierController::class, 'update'])->middleware(['auth:sanctum', 'ability:owner']);
 Route::get('/cashiers/{id}', [CashierController::class, 'show'])->middleware(['auth:sanctum', 'ability:owner']);
 Route::delete('/cashiers/{id}', [CashierController::class, 'destroy'])->middleware(['auth:sanctum', 'ability:owner']);
+Route::patch('/cashiers/{id}/change-password', [CashierController::class, 'updatePassword'])->middleware(['auth:sanctum', 'ability:owner']);

@@ -111,9 +111,79 @@ class OwnerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $curentOwner = $request->user();
+
+        $owner = Owner::find($curentOwner['id']);
+
+        if (!$owner) {
+            return abort(Response::HTTP_NOT_FOUND, 'owner not found');
+        }
+
+        $validator = Validator::make($request->except('email'), [
+            'name' => 'required',
+            'birthday' => 'required',
+            'phone_number' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 
+            Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        try {
+            $owner->update($request->except('email'));
+            $response = [
+                'message' => 'Updated',
+                'data' => $owner
+            ];
+            return response()->json($response, Response::HTTP_OK);
+        } catch (QueryException $e) {
+            return response()->json([
+                'message' => "Failed" . $e->errorInfo
+            ]);
+        }
+    }
+
+    public function updatePassword(Request $request) 
+    {
+        $curentOwner = $request->user();
+
+        $owner = Owner::find($curentOwner['id']);
+
+        $validator = Validator::make($request->all(), [
+            'old_password' => 'required',
+            'new_password' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 
+            Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        if (!Hash::check($request->input('old_password'), $owner['password'])) {
+            return response()->json([
+                'message' => 'wrong password'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $hashedPassword = Hash::make($request->input('new_password'));
+
+        try {
+            $owner->password = $hashedPassword;
+
+             $owner->save();
+
+             $response = [
+                'message' => 'Password Updated'
+            ];
+            return response()->json($response, Response::HTTP_OK);
+        } catch (QueryException $e) {
+            return response()->json([
+                'message' => "Failed" . $e->errorInfo
+            ]);
+        }
     }
 
     /**
