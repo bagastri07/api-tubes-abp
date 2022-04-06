@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CashierController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -48,3 +49,9 @@ Route::get('/products', [ProductController::class, 'index'])->middleware(['auth:
 Route::get('/products/{id}', [ProductController::class, 'show'])->middleware(['auth:sanctum', 'ability:owner']);
 Route::put('/products/{id}', [ProductController::class, 'update'])->middleware(['auth:sanctum', 'ability:owner']);
 Route::delete('/products/{id}', [ProductController::class, 'destroy'])->middleware(['auth:sanctum', 'ability:owner']);
+
+// Transaction Routes
+Route::post('/transactions', [TransactionController::class, 'store'])->middleware(['auth:sanctum', 'ability:cashier']);
+Route::get('/transactions/{id}', [TransactionController::class, 'show'])->middleware(['auth:sanctum', 'ability:cashier,owner']);
+Route::delete('/transactions/{id}', [TransactionController::class, 'destroy'])->middleware(['auth:sanctum', 'ability:cashier,owner']);
+Route::get('/transactions', [TransactionController::class, 'index'])->middleware(['auth:sanctum', 'ability:cashier,owner']);

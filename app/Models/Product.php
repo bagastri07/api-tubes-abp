@@ -11,5 +11,5 @@ class Product extends Model
     use HasFactory;
     use HasApiTokens;
 
-    protected $fillable = ['name', 'price', 'type', 'owner_id', 'image_url'];
+    protected $fillable = ['name', 'price', 'type', 'owner_id', 'image_url', 'stock'];
 }

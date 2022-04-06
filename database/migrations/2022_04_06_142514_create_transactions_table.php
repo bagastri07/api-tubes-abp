@@ -13,14 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->double('price');
-            $table->enum('type', ['ticket', 'product']);
-            $table->string('image_url')->default('img/no-image-available.png');
-            $table->unsignedInteger('stock');
+            $table->string('buyer_name');
+            $table->foreignId('product_id');
             $table->foreignId('owner_id');
+            $table->foreignId('cashier_id');
+            $table->unsignedInteger('quantity');
+            $table->double('purchase amount');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists('transactions');
     }
 };

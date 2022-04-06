@@ -57,6 +57,7 @@ class ProductController extends Controller
             'name' => 'required',
             'price' => 'required|numeric',
             'type' => 'required|in:ticket,product',
+            'stock' => 'required|numeric'
         ]);
 
 
@@ -143,6 +144,7 @@ class ProductController extends Controller
             'name' => 'required',
             'price' => 'required|numeric',
             'type' => 'required|in:ticket,product',
+            'stock' => 'required|numeric'
         ]);
 
         if ($validator->fails()) {
