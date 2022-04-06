@@ -7,6 +7,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -32,6 +33,44 @@ class ProductController extends Controller
             'data' => $products
         ];
 
+        return response()->json($response, Response::HTTP_OK);
+    }
+
+    public function updateImg(Request $request, $id)
+    {
+        // dd($request);
+        $validator = Validator::make($request->all(), [
+            'img' => 'required|image|file|max:1024|mimes:jpg,bmp,png',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 
+            Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        // Upload File
+        $path = $request->file('img')->store('products');
+
+        //Find Product
+        $product = Product::findOrFail($id);
+        $old_path = $product['image_url'];
+
+        // Check it's not default
+        if ($old_path != "img/no-image-available.png") {
+            Storage::delete($old_path);
+        }
+
+        // Update
+        $product['image_url'] = $path;
+        $product->save();
+
+        $response = [
+            "message" => 'img updated',
+            "data" => [
+                'img_url' => $path
+            ]
+        ];
+        
         return response()->json($response, Response::HTTP_OK);
     }
 
