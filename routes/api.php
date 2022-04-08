@@ -45,8 +45,8 @@ Route::patch('/cashiers/{id}/change-password', [CashierController::class, 'updat
 
 // Product Routes
 Route::post('/products', [ProductController::class, 'store'])->middleware(['auth:sanctum', 'ability:owner']);
-Route::get('/products', [ProductController::class, 'index'])->middleware(['auth:sanctum', 'ability:owner']);
-Route::get('/products/{id}', [ProductController::class, 'show'])->middleware(['auth:sanctum', 'ability:owner']);
+Route::get('/products', [ProductController::class, 'index'])->middleware(['auth:sanctum', 'ability:owner,cashier']);
+Route::get('/products/{id}', [ProductController::class, 'show'])->middleware(['auth:sanctum', 'ability:owner,cashier']);
 Route::put('/products/{id}', [ProductController::class, 'update'])->middleware(['auth:sanctum', 'ability:owner']);
 Route::delete('/products/{id}', [ProductController::class, 'destroy'])->middleware(['auth:sanctum', 'ability:owner']);
 Route::post('/products/{id}/change-img', [ProductController::class, 'updateImg'])->middleware(['auth:sanctum', 'ability:owner']);

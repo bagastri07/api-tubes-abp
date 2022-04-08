@@ -20,13 +20,20 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $owner = $request->user();
+        $user = $request->user();
+        $owner_id = null;
+
+        if ($user->tokenCan('owner')) {
+            $owner_id = $user['id'];
+        } else {
+            $owner_id = $user['owner_id'];
+        }
 
         $products = QueryBuilder::for(Product::class)
             ->allowedFilters('type')
             ->defaultSort('name', '-created_at')
             ->allowedSorts('name', 'created_at')
-            ->where('owner_id', $owner['id'])
+            ->where('owner_id', $owner_id)
             ->get();
 
         $response = [
@@ -56,7 +63,7 @@ class ProductController extends Controller
         $old_path = $product['image_url'];
 
         // Check it's not default
-        if ($old_path != "img/no-image-available.png") {
+        if ($old_path != "products/no-image-available.png") {
             Storage::delete($old_path);
         }
 
@@ -132,9 +139,16 @@ class ProductController extends Controller
      */
     public function show(Request $request ,$id)
     {
-        $owner = $request->user();
+        $user = $request->user();
+        $owner_id = null;
+
+        if ($user->tokenCan('owner')) {
+            $owner_id = $user['id'];
+        } else {
+            $owner_id = $user['owner_id'];
+        }
         $products = DB::table('products')
-            ->where('owner_id', $owner['id'])
+            ->where('owner_id', $owner_id)
             ->where('id', $id)
             ->first();
 
