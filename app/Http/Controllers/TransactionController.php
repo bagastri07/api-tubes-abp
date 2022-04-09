@@ -85,7 +85,15 @@ class TransactionController extends Controller
         $product = Product::findOrFail($transaction['product_id']);
 
         if ($product['stock' <= 0]) {
-            return abort(Response::HTTP_NOT_ACCEPTABLE, ['message:' => 'out of stock']);
+            return response()->json([
+                'message' => 'product out of stock'
+            ], Response::HTTP_BAD_REQUEST);
+        }
+        // return  $product['stock'];
+        if ($product['stock'] < $transaction['quantity']) {
+            return response()->json([
+                'message' => 'transaction exceeds stock'
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         // count purchase ammount
@@ -96,14 +104,16 @@ class TransactionController extends Controller
 
          // validate product ownership
          if ($product['owner_id'] != $transaction['owner_id']) {
-            return abort(Response::HTTP_FORBIDDEN, ['this product not belongs to the this owner']);
+            return response()->json([
+                'message' => 'this product not belongs to you'
+            ], Response::HTTP_FORBIDDEN);
         }
 
         try {
             $res = Transaction::create($transaction);
 
             // Decreament product stock
-            $product['stock'] = $product['stock'] - 1;
+            $product['stock'] = $product['stock'] - $transaction['quantity'];
             $product->save();
 
             $response = [

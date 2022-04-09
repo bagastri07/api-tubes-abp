@@ -30,7 +30,7 @@ Route::post('/auth/login-owner', [AuthController::class, 'loginOwner']);
 
 // Owner ROutes
 Route::post('/owners', [OwnerController::class, 'store']);
-Route::get('/owners', [OwnerController::class, 'show'])->middleware(['auth:sanctum', 'ability:owner']);
+Route::get('/owners/current', [OwnerController::class, 'show'])->middleware(['auth:sanctum', 'ability:owner']);
 Route::put('/owners', [OwnerController::class, 'update'])->middleware(['auth:sanctum', 'ability:owner']);
 Route::patch('/owners/change-password', [OwnerController::class, 'updatePassword'])->middleware(['auth:sanctum', 'ability:owner']);
 
