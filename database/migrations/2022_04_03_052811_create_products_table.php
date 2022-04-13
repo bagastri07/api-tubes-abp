@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->double('price');
             $table->enum('type', ['ticket', 'product']);
-            $table->string('image_url')->default('products/no-image-available.png');
+            $table->string('image_url')->default('no-image-available.png');
             $table->unsignedInteger('stock');
             $table->foreignId('owner_id');
             $table->timestamp('created_at')->useCurrent();
