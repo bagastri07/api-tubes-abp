@@ -12,7 +12,7 @@ services:
     container_name: "svc_abp_wesata"
     working_dir: /app
     ports:
-      - 8000:8001
+      - 8001:8001
     restart: unless-stopped
     volumes:
       - ./:/app
