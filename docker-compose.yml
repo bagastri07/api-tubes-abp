@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+  svc_abp:
+    build:
+      args:
+        user: bagas
+        uid: 1000
+      context: .
+      dockerfile: Dockerfile
+    image: abp_wesata
+    container_name: "svc_abp_wesata"
+    working_dir: /app
+    ports:
+      - 8000:8001
+    restart: unless-stopped
+    volumes:
+      - ./:/app
+    command: bash -c 'php artisan storage:link && php artisan serve --host=0.0.0.0 --port=8001'
