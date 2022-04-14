@@ -63,7 +63,7 @@ class ProductController extends Controller
         $old_path = $product['image_url'];
 
         // Check it's not default
-        if ($old_path != "products/no-image-available.png") {
+        if ($old_path != "no-image-available.png") {
             Storage::delete($old_path);
         }
 
