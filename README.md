@@ -1,3 +1,18 @@
+## Kelompok 5 ABP
+Merupakan service yang digunakan untuk memenuhi tugas besar ABP
+- Bagas Tri Wibowo
+- M Alfi Nasution
+- Maulana Farrel C
+- Perwira Hanif Z
+- Alifia A
+
+## Documentation
+- Postman : https://documenter.getpostman.com/view/10876762/UVyvutmY
+
+## Live at
+- Service: https://api-abp.bagas3.my.id/
+- Web: https://web-abp.bagas3.my.id/
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
 <p align="center">
