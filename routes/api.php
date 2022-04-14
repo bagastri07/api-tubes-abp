@@ -18,11 +18,13 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::get('/', function () {
+    return response()->json(['message'=> 'welcome to PHP API😀']);
+});
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
 
 // Auth Routes For Cashier
 Route::post('/auth/login-cashier', [AuthController::class, 'loginCashier']);
@@ -56,8 +58,3 @@ Route::post('/transactions', [TransactionController::class, 'store'])->middlewar
 Route::get('/transactions/{id}', [TransactionController::class, 'show'])->middleware(['auth:sanctum', 'ability:cashier,owner']);
 Route::delete('/transactions/{id}', [TransactionController::class, 'destroy'])->middleware(['auth:sanctum', 'ability:cashier,owner']);
 Route::get('/transactions', [TransactionController::class, 'index'])->middleware(['auth:sanctum', 'ability:cashier,owner']);
-
-
-Route::get('/', function () {
-    return response()->json(['message'=> 'welcome to PHP API😀']);
-});

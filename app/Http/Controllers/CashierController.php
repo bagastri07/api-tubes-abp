@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cashier;
+use App\Models\Owner;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use PhpParser\Node\Stmt\TryCatch;
@@ -20,9 +22,11 @@ class CashierController extends Controller
     public function index(Request $request)
     {
         $owner = $request->user();
-        $cashier = Cashier::all();
+        $cashier = DB::table('cashiers')
+            ->where('owner_id', $owner['id'])
+            ->get();
         $response = [
-            'data' => $cashier->where('owner_id', $owner['id'])
+            'data' => $cashier
         ];
 
         return response()->json($response, Response::HTTP_OK);
