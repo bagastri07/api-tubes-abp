@@ -15,4 +15,12 @@ class Owner extends Model
     public function cashiers() {
         return $this->hasMany(Cashier::class);
     }
+
+    public function products() {
+        return $this->hasMany(Product::class);
+    }
+
+    public function transactions() {
+        return $this->hasMany(Transaction::class);
+    }
 }
