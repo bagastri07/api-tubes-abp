@@ -194,8 +194,15 @@ class TransactionController extends Controller
     {
         $transaction = Transaction::findorFail($id);
 
-        $owner = $request->user();
-        if ($transaction['owner_id'] != $owner['id']) {
+        $user = $request->user();
+        $owner_id = null;
+
+        if ($user->tokenCan('owner')) {
+            $owner_id = $user['id'];
+        } else {
+            $owner_id = $user['owner_id'];
+        }
+        if ($transaction['owner_id'] != $owner_id) {
             return abort(Response::HTTP_FORBIDDEN, 'this transaction not belongs to you');
         }
 
