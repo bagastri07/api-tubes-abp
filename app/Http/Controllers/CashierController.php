@@ -241,4 +241,6 @@ class CashierController extends Controller
             ]);
         }
     }
+
+
 }

@@ -58,3 +58,7 @@ Route::post('/transactions', [TransactionController::class, 'store'])->middlewar
 Route::get('/transactions/{id}', [TransactionController::class, 'show'])->middleware(['auth:sanctum', 'ability:cashier,owner']);
 Route::delete('/transactions/{id}', [TransactionController::class, 'destroy'])->middleware(['auth:sanctum', 'ability:cashier,owner']);
 Route::get('/transactions', [TransactionController::class, 'index'])->middleware(['auth:sanctum', 'ability:cashier,owner']);
+
+// Public Endpoint
+Route::get('/public/shops', [OwnerController::class, 'getAllShop']);
+Route::get('/public/products/{idShop}', [ProductController::class, 'getProductByShop']);

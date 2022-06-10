@@ -196,4 +196,25 @@ class OwnerController extends Controller
     {
         //
     }
+
+    public function getAllShop()
+    {
+        $owners = Owner::all();
+
+        $shops = [];
+        
+        foreach ($owners as $key=>$owner) {
+            $shops[$key] = [
+                'id' => $owner['id'],
+                'shop' => 'Toko ' . $owner['name'],
+                'owner' => $owner['name']
+            ];
+        }
+        
+        $response = [
+            'data' => $shops
+        ];
+
+        return response()->json($response, Response::HTTP_OK);
+    }
 }

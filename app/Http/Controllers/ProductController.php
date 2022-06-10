@@ -257,4 +257,20 @@ class ProductController extends Controller
             ]);
         }
     }
+
+    public function getProductByShop($idShop)
+    {
+        $products = QueryBuilder::for(Product::class)
+            ->allowedFilters('type')
+            ->defaultSort('name', '-created_at')
+            ->allowedSorts('name', 'created_at')
+            ->where('owner_id', $idShop)
+            ->get();
+
+        $response = [
+            'data' => $products
+        ];
+
+        return response()->json($response, Response::HTTP_OK);
+    }
 }
