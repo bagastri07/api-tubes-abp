@@ -10,7 +10,7 @@ class Owner extends Model
 {
     use HasFactory;
     use HasApiTokens;
-    protected $fillable = ['name', 'email', 'password', 'birthday', 'phone_number'];
+    protected $fillable = ['name', 'email', 'password', 'birthday', 'phone_number', 'shop'];
 
     public function cashiers() {
         return $this->hasMany(Cashier::class);

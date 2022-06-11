@@ -71,7 +71,7 @@ class OwnerController extends Controller
             return response()->json($response, Response::HTTP_CREATED);
         } catch (QueryException $e) {
             return response()->json([
-                'message' => "Failed" . $e->errorInfo
+                'message' => "Failed" . $e
             ]);
         }
     }
@@ -206,9 +206,13 @@ class OwnerController extends Controller
         foreach ($owners as $key=>$owner) {
             $shops[$key] = [
                 'id' => $owner['id'],
-                'shop' => 'Toko ' . $owner['name'],
+                'shop' => $owner['shop'],
                 'owner' => $owner['name']
             ];
+
+            if ($owner['shop'] == null) {
+                $shops[$key]['shop'] = "Toko " . $owner['name'];
+            }
         }
         
         $response = [
