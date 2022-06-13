@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Owner;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 
@@ -22,7 +23,7 @@ class CashierFactory extends Factory
             'email' => $this->faker->safeEmail(),
             'password' => Hash::make('password'),
             'birthday' => $this->faker->date('Y-m-d', '2002-03-09'),
-            'phone_number' => $this->faker->e164PhoneNumber()
+            'phone_number' => $this->faker->e164PhoneNumber(),
         ];
     }
 }

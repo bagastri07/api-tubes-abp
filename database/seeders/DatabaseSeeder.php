@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Address;
 use App\Models\Cashier;
 use App\Models\Owner;
 use App\Models\Product;
@@ -18,9 +19,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $owners = Owner::factory(3)
+        $owners = Owner::factory(14)
             ->has(Cashier::factory()->count(3))
             ->has(Product::factory()->count(10))
+            ->has(Address::factory())->count(14)
             ->create();
         
         foreach ($owners as $owner) {

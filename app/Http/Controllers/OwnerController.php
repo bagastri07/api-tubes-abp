@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
 use App\Models\Owner;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -49,7 +51,11 @@ class OwnerController extends Controller
             'email' => 'required|email|unique:owners',
             'password' => 'required',
             'birthday' => 'required',
-            'phone_number' => 'required'
+            'phone_number' => 'required',
+            'post_code' => 'required',
+            'street' => 'required',
+            'district' => 'required',
+            'province' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -62,8 +68,25 @@ class OwnerController extends Controller
             'password' => $hashedPassword
         ]);
 
+        $request->merge([
+            'shop_img_url' => Owner::getRandomIcon()
+        ]);
+
         try {
             $owner = Owner::create($request->all());
+
+            $addressPayload = [
+                'post_code' => $request['post_code'],
+                'street' => $request['street'],
+                'district' => $request['district'],
+                'province' => $request['province'],
+                'owner_id' => $owner['id']
+            ];
+            
+            $address = Address::create($addressPayload);
+
+            $owner['address'] = $address;
+
             $response = [
                 'message' => 'Created',
                 'data' => $owner,
@@ -86,6 +109,12 @@ class OwnerController extends Controller
     {
         $user = $request->user();
         $owner = Owner::findOrFail($user['id']);
+
+        $address = DB::table('addresses')
+            ->where('owner_id', $owner['id'])
+            ->get();
+
+        $owner['address'] = $address;
 
         $response = [
             'data'=> $owner
@@ -204,10 +233,17 @@ class OwnerController extends Controller
         $shops = [];
         
         foreach ($owners as $key=>$owner) {
+            $address = DB::table('addresses')
+                ->select(['post_code', 'street', 'district', 'province'])
+                ->where('owner_id', $owner['id'])
+                ->get();
+
             $shops[$key] = [
                 'id' => $owner['id'],
+                'owner' => $owner['name'],
                 'shop' => $owner['shop'],
-                'owner' => $owner['name']
+                'shop_img_url' => $owner['shop_img_url'],
+                'address' => $address
             ];
 
             if ($owner['shop'] == null) {
