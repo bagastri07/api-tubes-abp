@@ -238,10 +238,12 @@ class OwnerController extends Controller
                 ->where('owner_id', $owner['id'])
                 ->get();
 
+
             $shops[$key] = [
                 'id' => $owner['id'],
                 'owner' => $owner['name'],
                 'shop' => $owner['shop'],
+                "phone_number" => $owner['phone_number'],
                 'shop_img_url' => $owner['shop_img_url'],
                 'address' => $address
             ];
