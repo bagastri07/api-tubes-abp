@@ -234,7 +234,14 @@ class OwnerController extends Controller
         
         foreach ($owners as $key=>$owner) {
             $address = DB::table('addresses')
-                ->select(['post_code', 'street', 'district', 'province'])
+                ->select([
+                    'post_code',
+                    'street',
+                    'district',
+                    'province',
+                    'latitude',
+                    'longitude'
+                ])
                 ->where('owner_id', $owner['id'])
                 ->get();
 
