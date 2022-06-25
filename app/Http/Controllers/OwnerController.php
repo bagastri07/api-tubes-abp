@@ -80,7 +80,8 @@ class OwnerController extends Controller
                 'street' => $request['street'],
                 'district' => $request['district'],
                 'province' => $request['province'],
-                'owner_id' => $owner['id']
+                'owner_id' => $owner['id'],
+                'link_map' => $request['link_map']
             ];
             
             $address = Address::create($addressPayload);
@@ -239,8 +240,7 @@ class OwnerController extends Controller
                     'street',
                     'district',
                     'province',
-                    'latitude',
-                    'longitude'
+                    'link_map'
                 ])
                 ->where('owner_id', $owner['id'])
                 ->get();

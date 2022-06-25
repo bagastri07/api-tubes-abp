@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Address extends Model
 {
     use HasFactory;
-    protected $fillable = ['owner_id', 'post_code', 'street', 'district', 'province', 'latitude', 'longitude'];
+    protected $fillable = ['owner_id', 'post_code', 'street', 'district', 'province', 'link_map'];
 }
